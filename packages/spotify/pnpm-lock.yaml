@@ -1,0 +1,12 @@
+lockfileVersion: '6.0'
+
+dependencies:
+  spotify-web-api-js:
+    specifier: ^1.5.2
+    version: 1.5.2
+
+packages:
+
+  /spotify-web-api-js@1.5.2:
+    resolution: {integrity: sha512-ie1gbg1wCabfobIkXTIBLUMyULS/hMCpF44Cdx2pAO0/+FrjhNSDjlDzcwCEDy+ZIo3Fscs+Gkg/GTeQ/ijo+Q==}
+    dev: false

@@ -1,0 +1,104 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+
+  relationMode = "prisma"
+}
+
+generator kysely {
+  provider = "prisma-kysely"
+
+  output   = "."
+  fileName = "types.ts"
+}
+
+model account {
+  id                       String  @id
+  user                     user    @relation(fields: [userId], references: [id])
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model session {
+  id           String   @id
+  sessionToken String   @unique
+  expires      DateTime
+  user         user     @relation(fields: [userId], references: [id])
+  userId       String
+
+  @@index([userId])
+}
+
+model user {
+  id            String       @id
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      account[]
+  sessions      session[]
+  collections   collection[]
+}
+
+model verification_token {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model playlist {
+  id    String @id
+  name  String @db.VarChar(50)
+  cover String @db.VarChar(500)
+
+  collections collection[]
+}
+
+enum CollectionMode {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model collection {
+  id          String         @id
+  spotify_id  String?
+  playlist    playlist       @relation(fields: [playlist_id], references: [id])
+  playlist_id String
+  owner       user           @relation(fields: [owner_id], references: [id])
+  owner_id    String
+  collecting  Boolean        @default(true)
+  count       Int            @default(0)
+  mode        CollectionMode
+  added       DateTime       @default(now())
+
+  tracks track[]
+
+  @@unique([owner_id, playlist_id])
+  @@index([owner_id])
+  @@index([playlist_id])
+}
+
+model track {
+  id            String     @id
+  collection    collection @relation(fields: [collection_id], references: [id])
+  collection_id String
+
+  @@unique([id, collection_id])
+  @@index([collection_id])
+}

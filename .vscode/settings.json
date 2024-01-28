@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    // "**/node_modules": true,
+    // "**/.nx": true,
+    // "**/.nx-helpers": true,
+    // "**/dist": true,
+    // "**/tmp": true
+  }
+}
